@@ -8,6 +8,8 @@ use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Repositories\Contracts\PostRepositoryInterface;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -35,7 +37,15 @@ class PostController extends Controller
 
     public function store(StorePostRequest $request)
     {
-        Post::create($request->validated() + ['user_id' => auth()->id()]);
+        $data = $request->validated();
+        if (empty($data['slug'])) {
+            $data['slug'] = Str::slug($data['title']);
+        }
+        if ($request->hasFile('thumbnail')) {
+            $data['thumbnail'] = $request->file('thumbnail')->store('posts/thumbnails', 'public');
+        }
+        $data['user_id'] = auth()->id();
+        Post::create($data);
         return redirect()->route('admin.posts.index')
             ->with('success', 'Postingan berhasil dibuat.');
     }
@@ -48,13 +58,26 @@ class PostController extends Controller
 
     public function update(UpdatePostRequest $request, Post $post)
     {
-        $post->update($request->validated());
+        $data = $request->validated();
+        if (empty($data['slug'])) {
+            $data['slug'] = Str::slug($data['title']);
+        }
+        if ($request->hasFile('thumbnail')) {
+            if ($post->thumbnail) {
+                Storage::disk('public')->delete($post->thumbnail);
+            }
+            $data['thumbnail'] = $request->file('thumbnail')->store('posts/thumbnails', 'public');
+        }
+        $post->update($data);
         return redirect()->route('admin.posts.index')
             ->with('success', 'Postingan berhasil diperbarui.');
     }
 
     public function destroy(Post $post)
     {
+        if ($post->thumbnail) {
+            Storage::disk('public')->delete($post->thumbnail);
+        }
         $post->delete();
         return redirect()->route('admin.posts.index')
             ->with('success', 'Postingan berhasil dihapus.');

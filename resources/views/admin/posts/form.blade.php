@@ -38,7 +38,12 @@
             <div>
                 <label for="thumbnail" class="block text-sm font-medium text-gray-700 dark:text-dark-muted">Thumbnail</label>
                 <input type="file" id="thumbnail" name="thumbnail" accept="image/jpeg,image/png,image/webp" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-primary-50 dark:file:bg-primary-900/30 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-600 dark:file:text-primary-400 hover:file:bg-primary-100 dark:hover:file:bg-primary-900/50">
-                @if (isset($post) && $post->thumbnail) <p class="mt-1 text-xs text-gray-500 dark:text-dark-muted">Kosongkan jika tidak ingin mengubah.</p> @endif
+                @if (isset($post) && $post->thumbnail)
+                    <div class="mt-2">
+                        <img src="{{ asset('storage/' . $post->thumbnail) }}" class="h-32 w-auto rounded-lg border object-cover">
+                        <p class="mt-1 text-xs text-gray-500 dark:text-dark-muted">Kosongkan jika tidak ingin mengubah.</p>
+                    </div>
+                @endif
             </div>
             <div class="flex items-center gap-4">
                 <label class="flex items-center gap-2 cursor-pointer">

@@ -10,6 +10,14 @@
                     <dt class="text-sm font-medium text-gray-500">Judul</dt>
                     <dd class="mt-1 text-sm text-gray-900">{{ $post->title }}</dd>
                 </div>
+                @if ($post->thumbnail)
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Thumbnail</dt>
+                    <dd class="mt-1">
+                        <img src="{{ asset('storage/' . $post->thumbnail) }}" class="h-40 w-auto rounded-lg border object-cover">
+                    </dd>
+                </div>
+                @endif
                 <div>
                     <dt class="text-sm font-medium text-gray-500">Slug</dt>
                     <dd class="mt-1 text-sm text-gray-900">{{ $post->slug }}</dd>

@@ -21,6 +21,7 @@
                 <thead>
                     <tr>
                         <th class="table-header">Judul</th>
+                        <th class="table-header hidden sm:table-cell">Thumbnail</th>
                         <th class="table-header hidden sm:table-cell">Kategori</th>
                         <th class="table-header">Status</th>
                         <th class="table-header hidden md:table-cell">Tanggal</th>
@@ -31,6 +32,13 @@
                     @foreach ($posts as $post)
                         <tr class="hover:bg-gray-50 dark:hover:bg-dark-surface/50 transition">
                             <td class="table-cell font-medium text-gray-900 dark:text-dark-text">{{ $post->title }}</td>
+                            <td class="table-cell hidden sm:table-cell">
+                                @if ($post->thumbnail)
+                                    <img src="{{ asset('storage/' . $post->thumbnail) }}" class="h-10 w-16 rounded object-cover">
+                                @else
+                                    <span class="text-xs text-gray-400">-</span>
+                                @endif
+                            </td>
                             <td class="table-cell hidden sm:table-cell">{{ $post->category?->name ?? '-' }}</td>
                             <td class="table-cell">
                                 @if ($post->is_published)
