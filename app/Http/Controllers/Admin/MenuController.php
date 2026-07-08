@@ -57,6 +57,7 @@ class MenuController extends Controller
 
         return redirect()->route('admin.menus.index')
             ->with('success', 'Menu berhasil dibuat.');
+    }
 
     public function edit(MenuItem $menu)
     {

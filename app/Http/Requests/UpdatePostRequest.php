@@ -15,7 +15,7 @@ class UpdatePostRequest extends FormRequest
     {
         return [
             'title' => 'required|max:255',
-            'slug' => 'required|max:255|unique:posts,slug,' . $this->route('post'),
+            'slug' => 'required|max:255|unique:posts,slug,' . $this->route('post')->getKey(),
             'category_id' => 'nullable|exists:categories,id',
             'excerpt' => 'nullable|max:500',
             'body' => 'required',

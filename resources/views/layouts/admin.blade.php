@@ -11,8 +11,29 @@
     @stack('styles')
 </head>
 <body class="font-sans text-gray-900 antialiased bg-gray-100 dark:bg-dark-bg">
-    <div class="flex h-screen overflow-hidden">
-        <x-admin.sidebar />
+    <div x-data="{ sidebarOpen: false }" @toggle-sidebar.window="sidebarOpen = !sidebarOpen" class="flex h-screen overflow-hidden">
+
+        {{-- Desktop sidebar --}}
+        <aside class="hidden lg:flex lg:flex-col w-64 bg-primary-950 dark:bg-[#0a0f1a] text-white shrink-0">
+            <x-admin.sidebar />
+        </aside>
+
+        {{-- Mobile overlay --}}
+        <div x-show="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 z-40 bg-black/50 lg:hidden"></div>
+
+        {{-- Mobile sidebar --}}
+        <aside x-show="sidebarOpen"
+               x-transition:enter="transition ease-out duration-300"
+               x-transition:enter-start="-translate-x-full"
+               x-transition:enter-end="translate-x-0"
+               x-transition:leave="transition ease-in duration-200"
+               x-transition:leave-start="translate-x-0"
+               x-transition:leave-end="-translate-x-full"
+               class="fixed inset-y-0 left-0 z-50 w-64 bg-primary-950 dark:bg-[#0a0f1a] text-white overflow-y-auto lg:hidden"
+        >
+            <x-admin.sidebar />
+        </aside>
+
         <div class="flex flex-col flex-1 overflow-y-auto">
             <x-admin.topbar />
             <main class="p-6 lg:p-8">

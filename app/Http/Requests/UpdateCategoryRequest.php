@@ -15,7 +15,7 @@ class UpdateCategoryRequest extends FormRequest
     {
         return [
             'name' => 'required|max:255',
-            'slug' => 'required|max:255|unique:categories,slug,' . $this->route('category'),
+            'slug' => 'required|max:255|unique:categories,slug,' . $this->route('category')->getKey(),
             'type' => 'required|in:post,pengumuman,dokumen',
             'order' => 'nullable|integer|min:0',
         ];

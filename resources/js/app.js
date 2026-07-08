@@ -62,19 +62,6 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
-    Alpine.data('bottomNav', () => ({
-        openMore: false,
-        openDropdown: null,
-
-        init() {
-            this.$watch('openMore', (val) => {
-                if (!val) {
-                    this.openDropdown = null;
-                }
-            });
-        },
-    }));
-
     Alpine.data('lightbox', () => ({
         open: false,
         currentIndex: 0,

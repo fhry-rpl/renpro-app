@@ -15,7 +15,7 @@ class UpdateDocumentRequest extends FormRequest
     {
         return [
             'title' => 'required|max:255',
-            'slug' => 'required|max:255|unique:documents,slug,' . $this->route('document'),
+            'slug' => 'required|max:255|unique:documents,slug,' . $this->route('document')->getKey(),
             'category_id' => 'nullable|exists:categories,id',
             'description' => 'nullable|max:1000',
             'file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx|max:10240',

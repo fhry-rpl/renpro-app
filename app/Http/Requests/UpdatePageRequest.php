@@ -15,7 +15,7 @@ class UpdatePageRequest extends FormRequest
     {
         return [
             'title' => 'required|max:255',
-            'slug' => 'required|max:255|unique:pages,slug,' . $this->route('page'),
+            'slug' => 'required|max:255|unique:pages,slug,' . $this->route('page')->getKey(),
             'body' => 'nullable',
             'is_published' => 'boolean',
         ];
