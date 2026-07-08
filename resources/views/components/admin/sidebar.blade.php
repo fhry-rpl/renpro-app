@@ -7,6 +7,7 @@
     ['label' => 'Galeri', 'icon' => 'image', 'route' => 'admin.galleries.index'],
     ['label' => 'Halaman', 'icon' => 'file-text', 'route' => 'admin.pages.index'],
     ['label' => 'Staf', 'icon' => 'users', 'route' => 'admin.staff.index'],
+    ['label' => 'Menu Navigasi', 'icon' => 'menu', 'route' => 'admin.menus.index'],
     ['label' => 'Pesan Masuk', 'icon' => 'mail', 'route' => 'admin.contacts.index'],
     ['label' => 'Pengaturan', 'icon' => 'settings', 'route' => 'admin.settings.index'],
 ]])

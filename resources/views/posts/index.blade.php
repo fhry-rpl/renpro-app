@@ -1,19 +1,27 @@
 @extends('layouts.front')
 
-@section('title', 'Berita — ' . config('app.name'))
+@php
+    $isPengumuman = request()->route()->named('pengumuman.index');
+    $label = $isPengumuman ? 'Pengumuman' : 'Berita';
+    $titleLabel = $isPengumuman ? 'Pengumuman' : 'Berita';
+    $description = $isPengumuman ? 'Pengumuman resmi Bandar Udara Budiarto' : 'Informasi terkini seputar Bandar Udara Budiarto';
+    $emptyMessage = $isPengumuman ? 'Belum ada pengumuman.' : 'Belum ada berita.';
+@endphp
+
+@section('title', $titleLabel . ' — ' . config('app.name'))
 
 @section('content')
     <section class="bg-surface-alt dark:bg-dark-surface-alt py-20 sm:py-28">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="max-w-2xl">
-                <span class="inline-flex items-center rounded-full bg-primary-50 dark:bg-primary-900/30 px-3 py-1 text-sm font-medium text-primary-700 dark:text-primary-300">Berita</span>
-                <h1 class="mt-4 text-3xl font-bold text-gray-900 dark:text-dark-text font-heading sm:text-4xl">Berita</h1>
-                <p class="mt-3 text-lg text-gray-600 dark:text-dark-muted">Informasi terkini seputar Bandar Udara Budiarto</p>
+                <span class="inline-flex items-center rounded-full bg-primary-50 dark:bg-primary-900/30 px-3 py-1 text-sm font-medium text-primary-700 dark:text-primary-300">{{ $label }}</span>
+                <h1 class="mt-4 text-3xl font-bold text-gray-900 dark:text-dark-text font-heading sm:text-4xl">{{ $titleLabel }}</h1>
+                <p class="mt-3 text-lg text-gray-600 dark:text-dark-muted">{{ $description }}</p>
             </div>
             @if ($posts->isEmpty())
                 <div class="mt-12 text-center py-16">
                     <svg class="mx-auto h-16 w-16 text-gray-300 dark:text-dark-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
-                    <p class="mt-4 text-gray-500 dark:text-dark-muted">Belum ada berita.</p>
+                    <p class="mt-4 text-gray-500 dark:text-dark-muted">{{ $emptyMessage }}</p>
                 </div>
             @else
                 <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

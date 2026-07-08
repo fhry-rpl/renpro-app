@@ -8,6 +8,11 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class DocumentRepository implements DocumentRepositoryInterface
 {
+    public function all(int $perPage = 15): LengthAwarePaginator
+    {
+        return Document::with('category', 'user')->latest()->paginate($perPage);
+    }
+
     public function allPublished(int $perPage = 15): LengthAwarePaginator
     {
         return Document::with('category')
@@ -40,6 +45,11 @@ class DocumentRepository implements DocumentRepositoryInterface
             })
             ->latest('published_at')
             ->paginate($perPage);
+    }
+
+    public function count(): int
+    {
+        return Document::count();
     }
 
     public function incrementDownload(int $id): void

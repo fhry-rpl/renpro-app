@@ -8,6 +8,11 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class ContactSubmissionRepository implements ContactSubmissionRepositoryInterface
 {
+    public function all(int $perPage = 15): LengthAwarePaginator
+    {
+        return ContactSubmission::latest()->paginate($perPage);
+    }
+
     public function allPaginated(int $perPage = 20): LengthAwarePaginator
     {
         return ContactSubmission::latest()->paginate($perPage);
@@ -21,6 +26,11 @@ class ContactSubmissionRepository implements ContactSubmissionRepositoryInterfac
     public function create(array $data): mixed
     {
         return ContactSubmission::create($data);
+    }
+
+    public function latest(int $limit = 5): mixed
+    {
+        return ContactSubmission::latest()->take($limit)->get();
     }
 
     public function markAsRead(int $id): void

@@ -16,7 +16,7 @@ class StaffController extends Controller
 
     public function index()
     {
-        $staff = $this->staffRepo->allOrdered();
+        $staff = $this->staffRepo->all();
         return view('admin.staff.index', compact('staff'));
     }
 

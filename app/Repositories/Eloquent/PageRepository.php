@@ -12,6 +12,11 @@ class PageRepository implements PageRepositoryInterface
         return Page::where('slug', $slug)->where('is_published', true)->firstOrFail();
     }
 
+    public function findPublishedBySlug(string $slug): mixed
+    {
+        return Page::where('slug', $slug)->where('is_published', true)->first();
+    }
+
     public function findById(int $id): mixed
     {
         return Page::findOrFail($id);

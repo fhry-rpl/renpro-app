@@ -17,6 +17,12 @@ class GalleryController extends Controller
         return view('admin.galleries.index', compact('galleries'));
     }
 
+    public function show(Gallery $gallery)
+    {
+        $gallery->load('images');
+        return view('admin.galleries.show', compact('gallery'));
+    }
+
     public function create()
     {
         return view('admin.galleries.form');

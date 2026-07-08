@@ -1,84 +1,104 @@
-@props(['menuItems' => [
-    ['label' => 'Beranda', 'route' => 'home'],
-    ['label' => 'Profil', 'children' => [
-        ['label' => 'Sejarah', 'route' => 'profile.page', 'params' => ['page' => 'sejarah']],
-        ['label' => 'Visi & Misi', 'route' => 'profile.page', 'params' => ['page' => 'visi-misi']],
-        ['label' => 'Tugas & Fungsi', 'route' => 'profile.page', 'params' => ['page' => 'tugas-fungsi']],
-        ['label' => 'Struktur Organisasi', 'route' => 'profile.page', 'params' => ['page' => 'struktur-organisasi']],
-    ]],
-    ['label' => 'Berita', 'route' => 'posts.index'],
-    ['label' => 'Pengumuman', 'route' => 'pengumuman.index'],
-    ['label' => 'Dokumen', 'route' => 'documents.index'],
-    ['label' => 'Layanan', 'route' => 'services.index'],
-    ['label' => 'Galeri', 'route' => 'galleries.index'],
-    ['label' => 'Kontak', 'route' => 'contact.index'],
-]])
-
 @php
+$bottomItems = $menuItems->take(4);
+$moreItems = $menuItems->slice(4);
+
 if (!function_exists('isActive')) {
     function isActive($route, $params = []) {
-        if (!request()->route()) return false;
-        if ($route === 'home') {
-            return request()->route()->named('home');
+        if (!request()->route() || !$route) return false;
+        $currentName = request()->route()->getName();
+        if ($currentName === $route) return true;
+        if (str_ends_with($route, '.index')) {
+            $prefix = substr($route, 0, strrpos($route, '.'));
+            return str_starts_with($currentName, $prefix . '.');
         }
-        return request()->route()->named($route);
+        return false;
     }
     function hasActiveChild($children) {
         foreach ($children as $child) {
-            if (isActive($child['route'], $child['params'] ?? [])) return true;
+            if (isActive($child->route ?? '', $child->params ?? [])) return true;
         }
         return false;
     }
 }
 @endphp
 
-<div
+<nav
     x-data="navigation()"
     @keydown.escape.window="isOpen = false"
-    class="sticky top-0 z-50 w-full border-b border-border dark:border-dark-border bg-white/95 dark:bg-dark-surface/95 backdrop-blur-md"
+    x-init="initScroll()"
+    class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+    :class="{ 'shadow-md bg-white/95 dark:bg-dark-surface/95 backdrop-blur-md': scrolled, 'bg-transparent': !scrolled }"
 >
     <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-        <a href="{{ route('home') }}" class="flex items-center gap-3 group" aria-label="Beranda">
+        <a href="{{ route('home') }}" class="flex items-center gap-3 group shrink-0" aria-label="Beranda">
             <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-600 text-sm font-bold text-white shadow-sm transition group-hover:shadow-md group-hover:bg-primary-700">RB</div>
             <div class="hidden sm:block">
                 <p class="text-sm font-semibold text-gray-900 dark:text-dark-text font-heading">RENPRO UPBU Budiarto</p>
                 <p class="text-xs text-gray-500 dark:text-dark-muted">Bandar Udara Budiarto</p>
             </div>
         </a>
-        <nav class="hidden lg:flex lg:items-center lg:gap-1" aria-label="Navigasi utama">
+
+        <nav class="hidden lg:flex lg:items-center lg:gap-0.5" aria-label="Navigasi utama">
             @foreach ($menuItems as $item)
                 <div class="relative">
-                    @if (!isset($item['children']))
-                        <a href="{{ route($item['route'], $item['params'] ?? []) }}"
-                           class="relative rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-700 dark:hover:text-primary-300
-                                  {{ isActive($item['route'], $item['params'] ?? []) ? 'text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-900/30' : 'text-gray-600 dark:text-dark-muted' }}"
-                        >{{ $item['label'] }}</a>
-                    @else
-                        <div class="relative" @mouseenter="clearTimeout(hoverTimeout); openDropdown = '{{ $item['label'] }}'" @mouseleave="hoverTimeout = setTimeout(() => { if (openDropdown === '{{ $item['label'] }}') openDropdown = null }, 200)" @click.outside="openDropdown = null">
-                            <button @click="openDropdown = openDropdown === '{{ $item['label'] }}' ? null : '{{ $item['label'] }}'" class="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-700 dark:hover:text-primary-300
-                                   {{ hasActiveChild($item['children']) ? 'text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-900/30' : 'text-gray-600 dark:text-dark-muted' }}">
-                                {{ $item['label'] }}
-                                <svg class="h-4 w-4 transition-transform" :class="{ 'rotate-180': openDropdown === '{{ $item['label'] }}' }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    @if (!$item->children->isEmpty())
+                        <div
+                            class="relative"
+                            @mouseenter="clearTimeout(hoverTimeout); openDropdown = '{{ $item->id }}'"
+                            @mouseleave="hoverTimeout = setTimeout(() => { if (openDropdown === '{{ $item->id }}') openDropdown = null }, 200)"
+                            @click.outside="openDropdown = null"
+                        >
+                            <button
+                                @click="openDropdown = openDropdown === '{{ $item->id }}' ? null : '{{ $item->id }}'"
+                                class="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium font-heading transition-colors {{ hasActiveChild($item->children) ? 'text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-dark-muted hover:text-primary-700 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-primary-900/30' }}"
+                                :class="{ 'text-primary-700 dark:text-primary-300': openDropdown === '{{ $item->id }}' }"
+                            >
+                                {{ $item->label }}
+                                <svg class="h-3.5 w-3.5 transition-transform" :class="{ 'rotate-180': openDropdown === '{{ $item->id }}' }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                             </button>
-                            <div x-show="openDropdown === '{{ $item['label'] }}'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-1" class="absolute left-0 top-full mt-1 z-50 w-56 rounded-xl border border-border dark:border-dark-border bg-white dark:bg-dark-surface py-2 shadow-dropdown" role="menu">
-                                @foreach ($item['children'] as $child)
-                                    <a href="{{ route($child['route'], $child['params'] ?? []) }}"
-                                       class="block px-4 py-2.5 text-sm transition hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-700 dark:hover:text-primary-300
-                                              {{ isActive($child['route'], $child['params'] ?? []) ? 'text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-900/30' : 'text-gray-700 dark:text-dark-muted' }}"
-                                       role="menuitem"
-                                    >{{ $child['label'] }}</a>
+                            @if (hasActiveChild($item->children))
+                                <span class="absolute -bottom-0.5 left-3 right-3 h-0.5 bg-primary-600 rounded-full"></span>
+                            @endif
+                            <div
+                                x-show="openDropdown === '{{ $item->id }}'"
+                                x-transition:enter="transition ease-out duration-150"
+                                x-transition:enter-start="opacity-0 translate-y-1"
+                                x-transition:enter-end="opacity-100 translate-y-0"
+                                x-transition:leave="transition ease-in duration-100"
+                                x-transition:leave-start="opacity-100 translate-y-0"
+                                x-transition:leave-end="opacity-0 translate-y-1"
+                                class="absolute left-0 top-full mt-1 z-50 w-56 rounded-xl border border-border dark:border-dark-border bg-white dark:bg-dark-surface py-1.5 shadow-dropdown"
+                                role="menu"
+                            >
+                                @foreach ($item->children as $child)
+                                    <a
+                                        href="{{ $child->route ? route($child->route, $child->params ?? []) : '#' }}"
+                                        class="block px-4 py-2.5 text-sm transition-colors {{ isActive($child->route ?? '', $child->params ?? []) ? 'text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-900/30 font-medium' : 'text-gray-700 dark:text-dark-muted hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-700 dark:hover:text-primary-300' }}"
+                                        role="menuitem"
+                                    >{{ $child->label }}</a>
                                 @endforeach
                             </div>
                         </div>
+                    @else
+                        <a
+                            href="{{ $item->route ? route($item->route, $item->params ?? []) : '#' }}"
+                            class="relative rounded-lg px-3 py-2 text-sm font-medium font-heading transition-colors {{ isActive($item->route ?? '', $item->params ?? []) ? 'text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-dark-muted hover:text-primary-700 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-primary-900/30' }}"
+                        >
+                            {{ $item->label }}
+                            @if (isActive($item->route ?? '', $item->params ?? []))
+                                <span class="absolute -bottom-0.5 left-3 right-3 h-0.5 bg-primary-600 rounded-full"></span>
+                            @endif
+                        </a>
                     @endif
                 </div>
             @endforeach
         </nav>
+
         <div class="flex items-center gap-2">
-            <a href="{{ route('search') }}" class="rounded-lg p-2 text-gray-400 dark:text-dark-muted transition hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-600 dark:hover:text-primary-300" aria-label="Pencarian">
+            <button @click="openSearch = true" class="rounded-lg p-2 text-gray-400 dark:text-dark-muted transition hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-600 dark:hover:text-primary-300" aria-label="Pencarian">
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </a>
-            <button @click="toggle()" class="rounded-lg p-2 text-gray-400 dark:text-dark-muted lg:hidden hover:bg-primary-50 dark:hover:bg-primary-900/30" aria-label="Toggle menu" :aria-expanded="isOpen">
+            <button @click="toggle()" class="rounded-lg p-2 text-gray-400 dark:text-dark-muted transition lg:hidden hover:bg-primary-50 dark:hover:bg-primary-900/30" aria-label="Toggle menu" :aria-expanded="isOpen">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path :class="{ 'hidden': isOpen, 'block': !isOpen }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     <path :class="{ 'block': isOpen, 'hidden': !isOpen }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -90,14 +110,23 @@ if (!function_exists('isActive')) {
     {{-- Overlay --}}
     <div x-show="isOpen" @click="isOpen = false" x-transition.opacity class="fixed inset-0 z-40 bg-black/50 lg:hidden"></div>
 
-    {{-- Drawer --}}
-    <div x-show="isOpen" x-transition:enter="transform transition ease-out duration-300" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transform transition ease-in duration-200" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" class="fixed inset-y-0 right-0 z-50 w-72 max-w-[85vw] bg-white dark:bg-dark-surface shadow-2xl lg:hidden overflow-y-auto" role="dialog" aria-modal="true">
+    {{-- Drawer Mobile --}}
+    <div
+        x-show="isOpen"
+        x-transition:enter="transform transition ease-out duration-300"
+        x-transition:enter-start="translate-x-full"
+        x-transition:enter-end="translate-x-0"
+        x-transition:leave="transform transition ease-in duration-200"
+        x-transition:leave-start="translate-x-0"
+        x-transition:leave-end="translate-x-full"
+        class="fixed inset-y-0 right-0 z-50 w-72 max-w-[85vw] bg-white dark:bg-dark-surface shadow-2xl lg:hidden overflow-y-auto"
+        role="dialog"
+        aria-modal="true"
+    >
         <div class="flex items-center justify-between px-4 py-4 border-b border-border dark:border-dark-border">
             <div class="flex items-center gap-3">
                 <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600 text-xs font-bold text-white">RB</div>
-                <div>
-                    <p class="text-sm font-semibold text-gray-900 dark:text-dark-text font-heading">Menu</p>
-                </div>
+                <p class="text-sm font-semibold text-gray-900 dark:text-dark-text font-heading">Menu</p>
             </div>
             <button @click="isOpen = false" class="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-dark-surface-alt" aria-label="Tutup menu">
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -106,23 +135,26 @@ if (!function_exists('isActive')) {
         <div class="px-3 py-4 space-y-1">
             @foreach ($menuItems as $item)
                 <div>
-                    @if (!isset($item['children']))
-                        <a href="{{ route($item['route'], $item['params'] ?? []) }}"
-                           class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-700 dark:hover:text-primary-300
-                                  {{ isActive($item['route'], $item['params'] ?? []) ? 'text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-900/30' : 'text-gray-600 dark:text-dark-muted' }}"
-                        >{{ $item['label'] }}</a>
+                    @if ($item->children->isEmpty())
+                        <a
+                            href="{{ $item->route ? route($item->route, $item->params ?? []) : '#' }}"
+                            class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition {{ isActive($item->route ?? '', $item->params ?? []) ? 'text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-900/30' : 'text-gray-600 dark:text-dark-muted hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-700 dark:hover:text-primary-300' }}"
+                        >{{ $item->label }}</a>
                     @else
                         <div>
-                            <button @click="openMobile = openMobile === '{{ $item['label'] }}' ? null : '{{ $item['label'] }}'" class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 dark:text-dark-muted hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-700 dark:hover:text-primary-300">
-                                <span>{{ $item['label'] }}</span>
-                                <svg class="h-4 w-4 transition-transform" :class="{ 'rotate-180': openMobile === '{{ $item['label'] }}' }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            <button
+                                @click="openMobile = openMobile === '{{ $item->id }}' ? null : '{{ $item->id }}'"
+                                class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 dark:text-dark-muted hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-700 dark:hover:text-primary-300"
+                            >
+                                <span>{{ $item->label }}</span>
+                                <svg class="h-4 w-4 transition-transform" :class="{ 'rotate-180': openMobile === '{{ $item->id }}' }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                             </button>
-                            <div x-show="openMobile === '{{ $item['label'] }}'" x-collapse class="ml-4 space-y-1 pb-1">
-                                @foreach ($item['children'] as $child)
-                                    <a href="{{ route($child['route'], $child['params'] ?? []) }}"
-                                       class="flex items-center rounded-lg px-3 py-2 text-sm transition hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-700 dark:hover:text-primary-300
-                                              {{ isActive($child['route'], $child['params'] ?? []) ? 'text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-900/30' : 'text-gray-600 dark:text-dark-muted' }}"
-                                    >{{ $child['label'] }}</a>
+                            <div x-show="openMobile === '{{ $item->id }}'" x-collapse class="ml-4 space-y-1 pb-1">
+                                @foreach ($item->children as $child)
+                                    <a
+                                        href="{{ $child->route ? route($child->route, $child->params ?? []) : '#' }}"
+                                        class="flex items-center rounded-lg px-3 py-2 text-sm transition {{ isActive($child->route ?? '', $child->params ?? []) ? 'text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-900/30' : 'text-gray-600 dark:text-dark-muted hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-700 dark:hover:text-primary-300' }}"
+                                    >{{ $child->label }}</a>
                                 @endforeach
                             </div>
                         </div>
@@ -137,4 +169,145 @@ if (!function_exists('isActive')) {
             </a>
         </div>
     </div>
+
+    {{-- Search Modal --}}
+    <div
+        x-show="openSearch"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-start justify-center pt-[15vh]"
+        @click.self="openSearch = false"
+        @keydown.escape.window="openSearch = false"
+    >
+        <div
+            x-show="openSearch"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+            x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+            class="w-full max-w-lg mx-4"
+        >
+            <form action="{{ route('search') }}" method="GET" class="bg-white dark:bg-dark-surface rounded-2xl shadow-modal border border-border dark:border-dark-border overflow-hidden">
+                <div class="flex items-center gap-3 px-5 py-4">
+                    <svg class="h-5 w-5 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input
+                        type="text"
+                        name="q"
+                        placeholder="Cari berita, dokumen, layanan..."
+                        class="flex-1 border-0 bg-transparent text-sm text-gray-900 dark:text-dark-text placeholder-gray-400 focus:outline-none focus:ring-0"
+                        x-ref="searchInput"
+                        autocomplete="off"
+                    >
+                    <kbd class="hidden sm:inline-flex items-center rounded-lg border border-border dark:border-dark-border px-2 py-1 text-xs text-gray-400 font-mono">ESC</kbd>
+                </div>
+            </form>
+        </div>
+    </div>
+</nav>
+
+{{-- Bottom Navigation (Mobile) --}}
+<div class="fixed bottom-0 left-0 right-0 z-50 lg:hidden" x-data="bottomNav()">
+    <div class="flex items-center justify-around bg-white dark:bg-dark-surface border-t border-border dark:border-dark-border safe-area-bottom px-2 py-1">
+        @foreach ($bottomItems as $item)
+            <a
+                href="{{ $item->route ? route($item->route, $item->params ?? []) : '#' }}"
+                class="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-colors {{ isActive($item->route ?? '', $item->params ?? []) ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 dark:text-dark-muted hover:text-primary-600 dark:hover:text-primary-400' }}"
+            >
+                @if ($item->icon)
+                    <x-dynamic-icon :name="$item->icon" class="h-5 w-5" />
+                @else
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                @endif
+                <span class="text-[10px] font-medium leading-tight">{{ $item->label }}</span>
+            </a>
+        @endforeach
+
+        @if ($moreItems->isNotEmpty())
+            <button
+                @click="openMore = !openMore"
+                class="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-colors text-gray-400 dark:text-dark-muted hover:text-primary-600 dark:hover:text-primary-400"
+                :class="{ 'text-primary-600 dark:text-primary-400': openMore }"
+            >
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                <span class="text-[10px] font-medium leading-tight">Lainnya</span>
+            </button>
+        @endif
+    </div>
+
+    {{-- More Bottom Sheet --}}
+    <div
+        x-show="openMore"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="translate-y-full"
+        x-transition:enter-end="translate-y-0"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="translate-y-0"
+        x-transition:leave-end="translate-y-full"
+        class="fixed inset-x-0 bottom-0 z-[70] rounded-t-2xl bg-white dark:bg-dark-surface border-t border-border dark:border-dark-border shadow-dropdown safe-area-bottom"
+        @click.outside="openMore = false"
+    >
+        <div class="flex justify-center pt-3 pb-1">
+            <div class="h-1 w-10 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+        </div>
+        <div class="px-4 pb-4 pt-2">
+            <p class="text-xs font-semibold text-gray-500 dark:text-dark-muted uppercase tracking-wider mb-3 px-2">Menu Lainnya</p>
+            <div class="grid grid-cols-4 gap-2">
+                @foreach ($moreItems as $item)
+                    @if ($item->children->isEmpty())
+                        <a
+                            href="{{ $item->route ? route($item->route, $item->params ?? []) : '#' }}"
+                            class="flex flex-col items-center gap-1.5 rounded-xl px-3 py-3 transition-colors {{ isActive($item->route ?? '', $item->params ?? []) ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30' : 'text-gray-500 dark:text-dark-muted hover:bg-gray-50 dark:hover:bg-dark-surface-alt hover:text-primary-600 dark:hover:text-primary-400' }}"
+                            @click="openMore = false"
+                        >
+                            @if ($item->icon)
+                                <x-dynamic-icon :name="$item->icon" class="h-6 w-6" />
+                            @else
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                            @endif
+                            <span class="text-[11px] font-medium text-center leading-tight">{{ $item->label }}</span>
+                        </a>
+                    @else
+                        <button
+                            @click="openDropdown = openDropdown === '{{ $item->id }}' ? null : '{{ $item->id }}'"
+                            class="flex flex-col items-center gap-1.5 rounded-xl px-3 py-3 transition-colors text-gray-500 dark:text-dark-muted hover:bg-gray-50 dark:hover:bg-dark-surface-alt hover:text-primary-600 dark:hover:text-primary-400"
+                            :class="{ 'text-primary-600 dark:text-primary-400': openDropdown === '{{ $item->id }}' }"
+                        >
+                            @if ($item->icon)
+                                <x-dynamic-icon :name="$item->icon" class="h-6 w-6" />
+                            @else
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                            @endif
+                            <span class="text-[11px] font-medium text-center leading-tight">{{ $item->label }}</span>
+                        </button>
+                    @endif
+                @endforeach
+            </div>
+
+            {{-- Bottom sheet submenu --}}
+            @foreach ($moreItems as $item)
+                @if (!$item->children->isEmpty())
+                    <div x-show="openDropdown === '{{ $item->id }}'" x-collapse class="mt-3 space-y-1 px-2">
+                        <p class="text-xs font-semibold text-gray-700 dark:text-dark-text mb-2">{{ $item->label }}</p>
+                        @foreach ($item->children as $child)
+                            <a
+                                href="{{ $child->route ? route($child->route, $child->params ?? []) : '#' }}"
+                                class="block rounded-lg px-4 py-2.5 text-sm transition {{ isActive($child->route ?? '', $child->params ?? []) ? 'text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-900/30 font-medium' : 'text-gray-600 dark:text-dark-muted hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-700 dark:hover:text-primary-300' }}"
+                                @click="openMore = false"
+                            >{{ $child->label }}</a>
+                        @endforeach
+                    </div>
+                @endif
+            @endforeach
+        </div>
+    </div>
 </div>
+
+{{-- Spacer untuk navbar fixed + bottom nav --}}
+<div class="h-16 lg:h-0"></div>
+<div class="lg:hidden h-16"></div>

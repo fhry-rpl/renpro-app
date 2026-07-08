@@ -8,6 +8,11 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class PostRepository implements PostRepositoryInterface
 {
+    public function all(int $perPage = 15): LengthAwarePaginator
+    {
+        return Post::with('category', 'user')->latest()->paginate($perPage);
+    }
+
     public function allPublished(int $perPage = 10): LengthAwarePaginator
     {
         return Post::with('category')
@@ -37,6 +42,11 @@ class PostRepository implements PostRepositoryInterface
             ->whereHas('category', fn($q) => $q->where('type', $categoryType))
             ->latest('published_at')
             ->paginate($perPage);
+    }
+
+    public function count(): int
+    {
+        return Post::count();
     }
 
     public function latest(int $limit = 6): mixed

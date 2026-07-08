@@ -9,6 +9,7 @@ use App\Repositories\Contracts\GalleryRepositoryInterface;
 use App\Repositories\Contracts\PageRepositoryInterface;
 use App\Repositories\Contracts\PostRepositoryInterface;
 use App\Repositories\Contracts\ServiceRepositoryInterface;
+use App\Repositories\Contracts\SettingRepositoryInterface;
 use App\Repositories\Contracts\StaffRepositoryInterface;
 use App\Repositories\Eloquent\CategoryRepository;
 use App\Repositories\Eloquent\ContactSubmissionRepository;
@@ -17,6 +18,7 @@ use App\Repositories\Eloquent\GalleryRepository;
 use App\Repositories\Eloquent\PageRepository;
 use App\Repositories\Eloquent\PostRepository;
 use App\Repositories\Eloquent\ServiceRepository;
+use App\Repositories\Eloquent\SettingRepository;
 use App\Repositories\Eloquent\StaffRepository;
 use App\Models\Category;
 use App\Models\ContactSubmission;
@@ -34,7 +36,9 @@ use App\Policies\PagePolicy;
 use App\Policies\PostPolicy;
 use App\Policies\ServicePolicy;
 use App\Policies\StaffPolicy;
+use App\View\Composers\NavigationComposer;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -49,6 +53,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PageRepositoryInterface::class, PageRepository::class);
         $this->app->bind(StaffRepositoryInterface::class, StaffRepository::class);
         $this->app->bind(ContactSubmissionRepositoryInterface::class, ContactSubmissionRepository::class);
+        $this->app->bind(SettingRepositoryInterface::class, SettingRepository::class);
     }
 
     public function boot(): void
@@ -61,5 +66,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Page::class, PagePolicy::class);
         Gate::policy(Staff::class, StaffPolicy::class);
         Gate::policy(ContactSubmission::class, ContactSubmissionPolicy::class);
+
+        View::composer(['layouts.front', 'components.navigation'], NavigationComposer::class);
     }
 }

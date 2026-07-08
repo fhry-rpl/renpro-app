@@ -22,6 +22,11 @@ class PostController extends Controller
         return view('admin.posts.index', compact('posts'));
     }
 
+    public function show(Post $post)
+    {
+        return view('admin.posts.show', compact('post'));
+    }
+
     public function create()
     {
         $categories = $this->categoryRepo->all();

@@ -29,7 +29,7 @@
                             <button @click="prev()" class="absolute left-4 rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition">
                                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                             </button>
-                            <img :src="images.length ? Storage.url(images[currentIndex]) : ''" alt="" class="max-h-[85vh] max-w-full rounded-2xl object-contain shadow-2xl">
+                            <img :src="images.length ? images[currentIndex] : ''" alt="" class="max-h-[85vh] max-w-full rounded-2xl object-contain shadow-2xl">
                             <button @click="next()" class="absolute right-4 rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition">
                                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                             </button>

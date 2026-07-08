@@ -23,6 +23,11 @@ class DocumentController extends Controller
         return view('admin.documents.index', compact('documents'));
     }
 
+    public function show(Document $document)
+    {
+        return view('admin.documents.show', compact('document'));
+    }
+
     public function create()
     {
         $categories = $this->categoryRepo->findByType('dokumen');

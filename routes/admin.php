@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DocumentController;
 use App\Http\Controllers\Admin\GalleryController;
+use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ServiceController;
@@ -21,6 +22,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('services', ServiceController::class);
     Route::resource('galleries', GalleryController::class);
     Route::resource('pages', PageController::class);
+
+    Route::resource('menus', MenuController::class)->except('show');
+    Route::post('menus/reorder', [MenuController::class, 'reorder'])->name('menus.reorder');
 
     Route::get('staff', [StaffController::class, 'index'])->name('staff.index');
     Route::get('staff/create', [StaffController::class, 'create'])->name('staff.create');

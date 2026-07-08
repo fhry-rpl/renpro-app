@@ -15,6 +15,11 @@ class ServiceController extends Controller
         return view('admin.services.index', compact('services'));
     }
 
+    public function show(Service $service)
+    {
+        return view('admin.services.show', compact('service'));
+    }
+
     public function create()
     {
         return view('admin.services.form');

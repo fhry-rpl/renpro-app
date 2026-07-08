@@ -12,7 +12,10 @@ document.addEventListener('alpine:init', () => {
         isOpen: false,
         openMobile: null,
         openDropdown: null,
+        openSearch: false,
         hoverTimeout: null,
+        scrolled: false,
+
         toggle() {
             this.isOpen = !this.isOpen;
             if (this.isOpen) {
@@ -24,12 +27,49 @@ document.addEventListener('alpine:init', () => {
                 document.body.style.overflow = '';
             }
         },
+
         init() {
             this.$watch('isOpen', (val) => {
                 if (!val) {
                     this.openMobile = null;
                     document.body.style.paddingRight = '';
                     document.body.style.overflow = '';
+                }
+            });
+
+            this.$watch('openSearch', (val) => {
+                if (val) {
+                    this.$nextTick(() => {
+                        const input = this.$refs?.searchInput;
+                        if (input) setTimeout(() => input.focus(), 100);
+                    });
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            });
+        },
+
+        initScroll() {
+            const onScroll = () => {
+                this.scrolled = window.scrollY > 20;
+            };
+            onScroll();
+            window.addEventListener('scroll', onScroll, { passive: true });
+            this.$watch('$el', () => {
+                window.removeEventListener('scroll', onScroll);
+            });
+        },
+    }));
+
+    Alpine.data('bottomNav', () => ({
+        openMore: false,
+        openDropdown: null,
+
+        init() {
+            this.$watch('openMore', (val) => {
+                if (!val) {
+                    this.openDropdown = null;
                 }
             });
         },
