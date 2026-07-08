@@ -1,0 +1,114 @@
+import Alpine from 'alpinejs';
+import { createIcons, icons } from 'lucide';
+
+window.Alpine = Alpine;
+
+const initLucide = () => createIcons({ icons });
+initLucide();
+document.addEventListener('alpine:after', initLucide);
+
+document.addEventListener('alpine:init', () => {
+    Alpine.data('navigation', () => ({
+        isOpen: false,
+        openMobile: null,
+        openDropdown: null,
+        hoverTimeout: null,
+        toggle() {
+            this.isOpen = !this.isOpen;
+            if (this.isOpen) {
+                const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+                document.body.style.paddingRight = `${scrollbarWidth}px`;
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.paddingRight = '';
+                document.body.style.overflow = '';
+            }
+        },
+        init() {
+            this.$watch('isOpen', (val) => {
+                if (!val) {
+                    this.openMobile = null;
+                    document.body.style.paddingRight = '';
+                    document.body.style.overflow = '';
+                }
+            });
+        },
+    }));
+
+    Alpine.data('lightbox', () => ({
+        open: false,
+        currentIndex: 0,
+        images: [],
+        openGallery(index, images) {
+            this.images = images;
+            this.currentIndex = index;
+            this.open = true;
+            document.body.style.overflow = 'hidden';
+        },
+        close() {
+            this.open = false;
+            document.body.style.overflow = '';
+        },
+        next() {
+            this.currentIndex = (this.currentIndex + 1) % this.images.length;
+        },
+        prev() {
+            this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
+        },
+        init() {
+            document.addEventListener('keydown', (e) => {
+                if (!this.open) return;
+                if (e.key === 'Escape') this.close();
+                if (e.key === 'ArrowRight') this.next();
+                if (e.key === 'ArrowLeft') this.prev();
+            });
+        },
+    }));
+
+    Alpine.data('formHandler', () => ({
+        loading: false,
+        success: false,
+        errors: {},
+        async submit() {
+            this.loading = true;
+            this.errors = {};
+            this.success = false;
+            const form = this.$el;
+            const data = new FormData(form);
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: data,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                });
+                if (response.ok) {
+                    this.success = true;
+                    form.reset();
+                } else if (response.status === 422) {
+                    const json = await response.json();
+                    this.errors = json.errors || {};
+                }
+            } catch {
+                this.errors._general = 'Terjadi kesalahan. Silakan coba lagi.';
+            } finally {
+                this.loading = false;
+            }
+        },
+    }));
+
+    Alpine.data('scrollReveal', () => ({
+        init() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            this.$el.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        },
+    }));
+});
+
+Alpine.start();
