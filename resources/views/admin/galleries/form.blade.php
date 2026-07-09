@@ -16,13 +16,15 @@
                 <label for="description" class="block text-sm font-medium text-gray-700">Deskripsi</label>
                 <textarea id="description" name="description" rows="3" maxlength="1000" class="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('description', $gallery->description ?? '') }}</textarea>
             </div>
-            <div>
+            <div x-data="{ coverSize: 0 }">
                 <label for="cover_image" class="block text-sm font-medium text-gray-700">Cover</label>
-                <input type="file" id="cover_image" name="cover_image" accept="image/jpeg,image/png,image/webp" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-600 hover:file:bg-indigo-100">
+                <input type="file" id="cover_image" name="cover_image" accept="image/jpeg,image/png,image/webp" @change="coverSize = $event.target.files[0]?.size || 0" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-600 hover:file:bg-indigo-100">
+                <p x-show="coverSize > 2097152" class="mt-1 text-xs text-red-600">Ukuran cover tidak boleh lebih dari 2 MB.</p>
             </div>
-            <div>
+            <div x-data="{ imagesTooLarge: false }">
                 <label for="images" class="block text-sm font-medium text-gray-700">Foto {{ isset($gallery) ? '(biarkan kosong jika tidak diubah)' : '' }} <span class="text-red-500">*</span></label>
-                <input type="file" id="images" name="images[]" multiple accept="image/jpeg,image/png,image/webp" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-600 hover:file:bg-indigo-100" {{ isset($gallery) ? '' : 'required' }}>
+                <input type="file" id="images" name="images[]" multiple accept="image/jpeg,image/png,image/webp" @change="imagesTooLarge = [...$event.target.files].some(f => f.size > 2097152)" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-600 hover:file:bg-indigo-100" {{ isset($gallery) ? '' : 'required' }}>
+                <p x-show="imagesTooLarge" class="mt-1 text-xs text-red-600">Setiap foto tidak boleh lebih dari 2 MB.</p>
                 @error('images') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
             </div>
             <div class="flex items-center gap-4">

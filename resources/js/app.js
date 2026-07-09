@@ -136,6 +136,27 @@ document.addEventListener('alpine:init', () => {
             this.$el.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         },
     }));
+
+    Alpine.data('countUp', () => ({
+        target: 0,
+        current: 0,
+        duration: 2000,
+        start(val) {
+            this.target = val;
+            this.animate();
+        },
+        animate() {
+            const startTime = performance.now();
+            const step = (now) => {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / this.duration, 1);
+                this.current = Math.floor(progress * this.target);
+                this.$el.textContent = this.current.toLocaleString();
+                if (progress < 1) requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+        },
+    }));
 });
 
 Alpine.start();

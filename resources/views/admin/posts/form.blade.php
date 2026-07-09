@@ -35,9 +35,10 @@
                 <textarea id="body" name="body" rows="15" class="mt-1 block w-full rounded-lg border border-border dark:border-dark-border bg-white dark:bg-dark-surface px-4 py-2.5 text-sm text-gray-900 dark:text-dark-text shadow-sm focus:border-primary-500 focus:ring-primary-500/20 @error('body') border-error-500 @enderror">{{ old('body', $post->body ?? '') }}</textarea>
                 @error('body') <p class="mt-1 text-xs text-error-600">{{ $message }}</p> @enderror
             </div>
-            <div>
+            <div x-data="{ thumbnailSize: 0 }">
                 <label for="thumbnail" class="block text-sm font-medium text-gray-700 dark:text-dark-muted">Thumbnail</label>
-                <input type="file" id="thumbnail" name="thumbnail" accept="image/jpeg,image/png,image/webp" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-primary-50 dark:file:bg-primary-900/30 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-600 dark:file:text-primary-400 hover:file:bg-primary-100 dark:hover:file:bg-primary-900/50">
+                <input type="file" id="thumbnail" name="thumbnail" accept="image/jpeg,image/png,image/webp" @change="thumbnailSize = $event.target.files[0]?.size || 0" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-primary-50 dark:file:bg-primary-900/30 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-600 dark:file:text-primary-400 hover:file:bg-primary-100 dark:hover:file:bg-primary-900/50">
+                <p x-show="thumbnailSize > 2097152" class="mt-1 text-xs text-error-600">Ukuran thumbnail tidak boleh lebih dari 2 MB.</p>
                 @if (isset($post) && $post->thumbnail)
                     <div class="mt-2">
                         <img src="{{ asset('storage/' . $post->thumbnail) }}" class="h-32 w-auto rounded-lg border object-cover">

@@ -16,6 +16,15 @@ class GalleryRepository implements GalleryRepositoryInterface
             ->paginate($perPage);
     }
 
+    public function latest(int $limit = 6): mixed
+    {
+        return Gallery::with('images')
+            ->where('is_published', true)
+            ->latest('published_at')
+            ->take($limit)
+            ->get();
+    }
+
     public function findById(int $id): mixed
     {
         return Gallery::with('images')->findOrFail($id);

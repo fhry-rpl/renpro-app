@@ -6,6 +6,8 @@
     <section class="py-20 sm:py-28">
         <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             <div class="flex items-center gap-2 text-sm text-primary-600 dark:text-primary-400 mb-4">
+                <a href="{{ route('home') }}" class="hover:text-primary-700 transition">Beranda</a>
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 <a href="{{ route('documents.index') }}" class="hover:text-primary-700 transition">Dokumen</a>
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 <span class="text-gray-500 dark:text-dark-muted">{{ $document->title }}</span>
@@ -29,10 +31,14 @@
                     </a>
                 </div>
             </div>
-            <div class="mt-8">
-                <a href="{{ route('documents.index') }}" class="inline-flex items-center text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition">
+            <div class="mt-8 flex flex-wrap gap-4">
+                <a href="{{ route('home') }}" class="inline-flex items-center text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition">
                     <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m7 7l-7-7 7-7"/></svg>
-                    Kembali ke Dokumen
+                    Kembali ke Beranda
+                </a>
+                <a href="{{ route('documents.index') }}" class="inline-flex items-center text-sm text-gray-500 dark:text-dark-muted hover:text-primary-600 dark:hover:text-primary-400 transition">
+                    Semua Dokumen
+                    <svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 </a>
             </div>
         </div>

@@ -5,6 +5,8 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@plugin "@tailwindcss/typography";
+
 @theme {
     --font-sans: 'Source Sans 3', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     --font-heading: 'Lexend', sans-serif;
@@ -187,4 +189,57 @@
 .reveal.animate-in {
     opacity: 1;
     transform: translateY(0);
+}
+
+.prose {
+    --tw-prose-body: #374151;
+    --tw-prose-headings: #111827;
+    --tw-prose-links: #1e40af;
+    --tw-prose-bold: #111827;
+    --tw-prose-counters: #6b7280;
+    --tw-prose-bullets: #6b7280;
+    --tw-prose-hr: #e5e7eb;
+    --tw-prose-quotes: #111827;
+    --tw-prose-quote-borders: #1e40af;
+    --tw-prose-captions: #6b7280;
+    --tw-prose-code: #111827;
+    --tw-prose-pre-code: #e5e7eb;
+    --tw-prose-pre-bg: #1f2937;
+    --tw-prose-th-borders: #d1d5db;
+    --tw-prose-td-borders: #e5e7eb;
+    --tw-prose-invert-body: #d1d5db;
+    --tw-prose-invert-headings: #f1f5f9;
+    --tw-prose-invert-links: #93c5fd;
+    --tw-prose-invert-bold: #f1f5f9;
+    --tw-prose-invert-counters: #9ca3af;
+    --tw-prose-invert-bullets: #9ca3af;
+    --tw-prose-invert-hr: #374151;
+    --tw-prose-invert-quotes: #f1f5f9;
+    --tw-prose-invert-quote-borders: #93c5fd;
+    --tw-prose-invert-captions: #9ca3af;
+    --tw-prose-invert-code: #f1f5f9;
+    --tw-prose-invert-pre-code: #d1d5db;
+    --tw-prose-invert-pre-bg: #111827;
+    --tw-prose-invert-th-borders: #4b5563;
+    --tw-prose-invert-td-borders: #374151;
+}
+.prose h2 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    margin-top: 2em;
+    margin-bottom: 0.75em;
+}
+.prose h3 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+}
+.prose a {
+    text-decoration: none;
+    font-weight: 500;
+}
+.prose a:hover {
+    text-decoration: underline;
+}
+.prose img {
+    border-radius: 0.75rem;
 }

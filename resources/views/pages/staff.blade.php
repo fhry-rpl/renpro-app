@@ -31,6 +31,25 @@
                             @if ($member->bio)
                                 <p class="mt-2 text-xs text-gray-500 dark:text-dark-muted">{{ $member->bio }}</p>
                             @endif
+                            @if ($member->instagram || $member->whatsapp || $member->facebook)
+                                <div class="mt-3 flex items-center justify-center gap-3">
+                                    @if ($member->instagram)
+                                        <a href="https://instagram.com/{{ str_replace('@', '', $member->instagram) }}" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-pink-500 transition-colors" title="Instagram">
+                                            <i data-lucide="instagram" class="h-4 w-4"></i>
+                                        </a>
+                                    @endif
+                                    @if ($member->whatsapp)
+                                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $member->whatsapp) }}" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-green-500 transition-colors" title="WhatsApp">
+                                            <i data-lucide="message-circle" class="h-4 w-4"></i>
+                                        </a>
+                                    @endif
+                                    @if ($member->facebook)
+                                        <a href="{{ $member->facebook }}" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-blue-600 transition-colors" title="Facebook">
+                                            <i data-lucide="facebook" class="h-4 w-4"></i>
+                                        </a>
+                                    @endif
+                                </div>
+                            @endif
                         </div>
                     @endforeach
                 </div>

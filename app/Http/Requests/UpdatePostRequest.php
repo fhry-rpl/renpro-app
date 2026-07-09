@@ -24,4 +24,13 @@ class UpdatePostRequest extends FormRequest
             'published_at' => 'nullable|date',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'thumbnail.image' => 'Thumbnail harus berupa gambar.',
+            'thumbnail.mimes' => 'Thumbnail harus berformat: jpeg, png, jpg, atau webp.',
+            'thumbnail.max' => 'Ukuran thumbnail tidak boleh lebih dari 2 MB.',
+        ];
+    }
 }

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Staff extends Model
 {
-    protected $fillable = ['name', 'position', 'photo', 'bio', 'order', 'is_active'];
+    protected $fillable = ['name', 'position', 'photo', 'bio', 'instagram', 'whatsapp', 'facebook', 'order', 'is_active'];
 
     protected function casts(): array
     {

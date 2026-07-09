@@ -23,4 +23,16 @@ class UpdateGalleryRequest extends FormRequest
             'published_at' => 'nullable|date',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'cover_image.image' => 'Cover harus berupa gambar.',
+            'cover_image.mimes' => 'Cover harus berformat: jpeg, png, jpg, atau webp.',
+            'cover_image.max' => 'Ukuran cover tidak boleh lebih dari 2 MB.',
+            'images.*.image' => 'Setiap foto harus berupa gambar.',
+            'images.*.mimes' => 'Setiap foto harus berformat: jpeg, png, jpg, atau webp.',
+            'images.*.max' => 'Setiap foto tidak boleh lebih dari 2 MB.',
+        ];
+    }
 }

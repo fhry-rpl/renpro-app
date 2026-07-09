@@ -17,13 +17,29 @@
                 <input type="text" id="position" name="position" value="{{ old('position', $staff->position ?? '') }}" required maxlength="255" class="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('position') border-red-500 @enderror">
                 @error('position') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
             </div>
-            <div>
+            <div x-data="{ photoSize: 0 }">
                 <label for="photo" class="block text-sm font-medium text-gray-700">Foto</label>
-                <input type="file" id="photo" name="photo" accept="image/jpeg,image/png,image/webp" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-600 hover:file:bg-indigo-100">
+                <input type="file" id="photo" name="photo" accept="image/jpeg,image/png,image/webp" @change="photoSize = $event.target.files[0]?.size || 0" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-600 hover:file:bg-indigo-100">
+                <p x-show="photoSize > 2097152" class="mt-1 text-xs text-red-600">Ukuran foto tidak boleh lebih dari 2 MB.</p>
             </div>
             <div>
                 <label for="bio" class="block text-sm font-medium text-gray-700">Bio</label>
                 <textarea id="bio" name="bio" rows="3" maxlength="1000" class="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('bio', $staff->bio ?? '') }}</textarea>
+            </div>
+            <div>
+                <label for="instagram" class="block text-sm font-medium text-gray-700">Instagram</label>
+                <input type="text" id="instagram" name="instagram" value="{{ old('instagram', $staff->instagram ?? '') }}" maxlength="255" placeholder="@username" class="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                @error('instagram') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+            </div>
+            <div>
+                <label for="whatsapp" class="block text-sm font-medium text-gray-700">WhatsApp</label>
+                <input type="text" id="whatsapp" name="whatsapp" value="{{ old('whatsapp', $staff->whatsapp ?? '') }}" maxlength="255" placeholder="08xxxxxxxxxx" class="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                @error('whatsapp') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+            </div>
+            <div>
+                <label for="facebook" class="block text-sm font-medium text-gray-700">Facebook</label>
+                <input type="text" id="facebook" name="facebook" value="{{ old('facebook', $staff->facebook ?? '') }}" maxlength="255" placeholder="URL profil Facebook" class="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                @error('facebook') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label for="order" class="block text-sm font-medium text-gray-700">Urutan</label>
