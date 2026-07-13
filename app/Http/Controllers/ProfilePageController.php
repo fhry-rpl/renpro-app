@@ -26,6 +26,9 @@ class ProfilePageController extends Controller
         }
 
         $page = $this->pageRepo->findPublishedBySlug($slug);
+        if (!$page) {
+            abort(404);
+        }
         return view('pages.show', compact('page'));
     }
 }

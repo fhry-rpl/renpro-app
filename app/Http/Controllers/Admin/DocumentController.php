@@ -38,7 +38,8 @@ class DocumentController extends Controller
     {
         $data = $request->validated();
         $data['file_path'] = $request->file('file')->store('documents', 'public');
-        Document::create($data + ['user_id' => auth()->id()]);
+        $data['user_id'] = auth()->id();
+        Document::create($data);
         return redirect()->route('admin.documents.index')
             ->with('success', 'Dokumen berhasil diunggah.');
     }

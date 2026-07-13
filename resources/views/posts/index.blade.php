@@ -37,7 +37,7 @@
                             <div class="p-5">
                                 <div class="flex items-center gap-2">
                                     <span class="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 px-2 py-0.5 rounded-full">{{ $post->category?->name }}</span>
-                                    <span class="text-xs text-gray-400">{{ $post->published_at->format('d F Y') }}</span>
+                                    <span class="text-xs text-gray-400">{{ $post->published_at?->format('d F Y') ?? '' }}</span>
                                 </div>
                                 <h2 class="mt-2 text-lg font-semibold text-gray-900 dark:text-dark-text font-heading group-hover:text-primary-600 dark:group-hover:text-primary-400 transition">
                                     <a href="{{ route('posts.show', $post->slug) }}">{{ $post->title }}</a>

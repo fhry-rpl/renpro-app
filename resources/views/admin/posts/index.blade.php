@@ -16,7 +16,7 @@
             <p class="mt-4 text-gray-500 dark:text-dark-muted">Belum ada postingan.</p>
         </div>
     @else
-        <div class="card-dashboard overflow-hidden">
+        <div class="card-dashboard overflow-x-auto">
             <table class="table-base">
                 <thead>
                     <tr>

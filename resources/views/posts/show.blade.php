@@ -15,7 +15,7 @@
             </div>
             <div class="flex items-center gap-3 mb-4">
                 <span class="text-sm font-medium text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 px-3 py-1 rounded-full">{{ $post->category?->name }}</span>
-                <span class="text-sm text-gray-500 dark:text-dark-muted">{{ $post->published_at->format('d F Y') }}</span>
+                <span class="text-sm text-gray-500 dark:text-dark-muted">{{ $post->published_at?->format('d F Y') ?? '' }}</span>
             </div>
             <h1 class="text-3xl font-bold text-gray-900 dark:text-dark-text font-heading sm:text-4xl">{{ $post->title }}</h1>
             @if ($post->thumbnail)

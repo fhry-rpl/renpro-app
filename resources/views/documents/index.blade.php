@@ -34,7 +34,7 @@
                                     @if ($document->description)
                                         <p class="mt-1 text-xs text-gray-500 dark:text-dark-muted line-clamp-1">{{ $document->description }}</p>
                                     @endif
-                                    <p class="mt-1 text-xs text-gray-400">{{ $document->published_at->format('d F Y') }}</p>
+                                    <p class="mt-1 text-xs text-gray-400">{{ $document->published_at?->format('d F Y') ?? '' }}</p>
                                 </div>
                             </div>
                             <a href="{{ route('documents.download', $document->id) }}" class="shrink-0 rounded-lg bg-primary-50 dark:bg-primary-900/30 p-2.5 text-primary-600 dark:text-primary-400 transition hover:bg-primary-100 dark:hover:bg-primary-900/50" aria-label="Unduh dokumen">
@@ -44,7 +44,7 @@
                     @endforeach
                 </div>
                 <div class="mt-8">
-                    {{ $documents->links() }}
+                    {{ $documents->appends(request()->query())->links() }}
                 </div>
             @endif
         </div>

@@ -19,7 +19,7 @@
             @if ($gallery->images->isNotEmpty())
                 <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" x-data="lightbox()">
                     @foreach ($gallery->images as $index => $image)
-                        <button @click="openGallery({{ $index }}, {{ $gallery->images->pluck('image_path')->map(fn($p) => Storage::url($p)) }})" class="group overflow-hidden rounded-xl card-hover">
+                        <button @click="openGallery({{ $index }}, @json($gallery->images->pluck('image_path')->map(fn($p) => Storage::url($p))))" class="group overflow-hidden rounded-xl card-hover">
                             <img src="{{ Storage::url($image->image_path) }}" alt="" class="h-48 w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy">
                         </button>
                     @endforeach

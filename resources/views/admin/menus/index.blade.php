@@ -10,14 +10,14 @@
     @if ($menus->isEmpty())
         <p class="text-gray-500">Belum ada menu. <a href="{{ route('admin.menus.create') }}" class="text-indigo-600 hover:underline">Buat menu baru</a></p>
     @else
-        <div class="overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="overflow-x-auto rounded-xl border border-gray-200 bg-white">
             <table class="min-w-full divide-y divide-gray-200" id="menu-table">
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Label</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Route</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ikon</th>
-                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Aktif</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Route</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Ikon</th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Aktif</th>
                         <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Aksi</th>
                     </tr>
                 </thead>
@@ -44,9 +44,9 @@
                                     </div>
                                 @endif
                             </td>
-                            <td class="px-6 py-4 text-sm text-gray-600">{{ $menu->route ?? '-' }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-600">{{ $menu->icon ?? '-' }}</td>
-                            <td class="px-6 py-4 text-center">
+                            <td class="px-6 py-4 text-sm text-gray-600 hidden sm:table-cell">{{ $menu->route ?? '-' }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-600 hidden sm:table-cell">{{ $menu->icon ?? '-' }}</td>
+                            <td class="px-6 py-4 text-center hidden sm:table-cell">
                                 @if ($menu->is_active)
                                     <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700">Ya</span>
                                 @else

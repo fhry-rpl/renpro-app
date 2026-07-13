@@ -10,13 +10,13 @@
     @if ($categories->isEmpty())
         <p class="text-gray-500">Belum ada kategori.</p>
     @else
-        <div class="overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="overflow-x-auto rounded-xl border border-gray-200 bg-white">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tipe</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Urutan</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Tipe</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Urutan</th>
                         <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Aksi</th>
                     </tr>
                 </thead>
@@ -24,8 +24,8 @@
                     @foreach ($categories as $category)
                         <tr>
                             <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $category->name }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-600">{{ $category->type }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-600">{{ $category->order ?? '-' }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-600 hidden sm:table-cell">{{ $category->type }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-600 hidden sm:table-cell">{{ $category->order ?? '-' }}</td>
                             <td class="px-6 py-4 text-right text-sm">
                                 <a href="{{ route('admin.categories.edit', $category->id) }}" class="font-medium text-indigo-600 hover:text-indigo-500">Edit</a>
                                 <form method="POST" action="{{ route('admin.categories.destroy', $category->id) }}" class="inline ml-2" onsubmit="return confirm('Hapus kategori ini?')">

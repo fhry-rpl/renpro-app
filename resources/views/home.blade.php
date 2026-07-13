@@ -90,7 +90,7 @@
                                     @if ($post->category)
                                         <span class="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 px-2 py-0.5 rounded-full">{{ $post->category->name }}</span>
                                     @endif
-                                    <span class="text-xs text-gray-400 dark:text-dark-muted">{{ $post->published_at->format('d F Y') }}</span>
+                                    <span class="text-xs text-gray-400 dark:text-dark-muted">{{ $post->published_at?->format('d F Y') ?? '' }}</span>
                                 </div>
                                 <h3 class="mt-2 text-lg font-semibold text-gray-900 dark:text-dark-text font-heading group-hover:text-primary-600 dark:group-hover:text-primary-400 transition">
                                     <a href="{{ route('posts.show', $post->slug) }}">{{ $post->title }}</a>
@@ -129,7 +129,7 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2 mb-1">
-                                    <span class="text-xs text-accent-600 dark:text-accent-400 font-medium">{{ $item->published_at->format('d F Y') }}</span>
+                                    <span class="text-xs text-accent-600 dark:text-accent-400 font-medium">{{ $item->published_at?->format('d F Y') ?? '' }}</span>
                                     @if ($item->category)
                                         <span class="text-[10px] px-2 py-0.5 rounded-full bg-accent-50 dark:bg-accent-900/30 text-accent-600 dark:text-accent-400 font-medium">{{ $item->category->name }}</span>
                                     @endif
