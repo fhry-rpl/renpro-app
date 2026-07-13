@@ -29,7 +29,7 @@ class StaffController extends Controller
     {
         $data = $request->validated();
         if ($request->hasFile('photo')) {
-            $data['photo'] = $request->file('photo')->store('staff', 'public');
+            $data['photo'] = $request->file('photo')->store('staff', 's3');
         }
         $this->staffRepo->create($data);
         return redirect()->route('admin.staff.index')
@@ -48,9 +48,9 @@ class StaffController extends Controller
         if ($request->hasFile('photo')) {
             $old = $this->staffRepo->findById($id);
             if ($old->photo) {
-                Storage::disk('public')->delete($old->photo);
+                Storage::disk('s3')->delete($old->photo);
             }
-            $data['photo'] = $request->file('photo')->store('staff', 'public');
+            $data['photo'] = $request->file('photo')->store('staff', 's3');
         }
         $this->staffRepo->update($id, $data);
         return redirect()->route('admin.staff.index')
@@ -61,7 +61,7 @@ class StaffController extends Controller
     {
         $staff = $this->staffRepo->findById($id);
         if ($staff->photo) {
-            Storage::disk('public')->delete($staff->photo);
+            Storage::disk('s3')->delete($staff->photo);
         }
         $this->staffRepo->delete($id);
         return redirect()->route('admin.staff.index')

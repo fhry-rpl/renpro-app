@@ -37,7 +37,7 @@ class DocumentController extends Controller
     public function store(StoreDocumentRequest $request)
     {
         $data = $request->validated();
-        $data['file_path'] = $request->file('file')->store('documents', 'public');
+        $data['file_path'] = $request->file('file')->store('documents', 's3');
         $data['user_id'] = auth()->id();
         Document::create($data);
         return redirect()->route('admin.documents.index')
@@ -54,8 +54,8 @@ class DocumentController extends Controller
     {
         $data = $request->validated();
         if ($request->hasFile('file')) {
-            Storage::disk('public')->delete($document->file_path);
-            $data['file_path'] = $request->file('file')->store('documents', 'public');
+            Storage::disk('s3')->delete($document->file_path);
+            $data['file_path'] = $request->file('file')->store('documents', 's3');
         }
         $document->update($data);
         return redirect()->route('admin.documents.index')
@@ -64,7 +64,7 @@ class DocumentController extends Controller
 
     public function destroy(Document $document)
     {
-        Storage::disk('public')->delete($document->file_path);
+        Storage::disk('s3')->delete($document->file_path);
         $document->delete();
         return redirect()->route('admin.documents.index')
             ->with('success', 'Dokumen berhasil dihapus.');
