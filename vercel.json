@@ -8,6 +8,7 @@
         { "src": "/build/(.*)", "dest": "/public/build/$1" },
         { "src": "/(.*)", "dest": "/api/index.php" }
     ],
-    "buildCommand": "composer install --no-dev --no-interaction && php artisan config:cache && php artisan route:cache && php artisan view:cache",
-    "outputDirectory": "public"
+    "outputDirectory": "public",
+    "buildCommand": "curl -sS https://getcomposer.org/installer | php && php composer.phar install --no-dev --no-interaction && php artisan config:cache && php artisan route:cache && php artisan view:cache",
+    "installCommand": "npm install"
 }
