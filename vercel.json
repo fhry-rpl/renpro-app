@@ -9,6 +9,6 @@
         { "src": "/(.*)", "dest": "/api/index.php" }
     ],
     "outputDirectory": "public",
-    "buildCommand": "curl -sS https://getcomposer.org/installer | php && php composer.phar install --no-dev --no-interaction && php artisan config:cache && php artisan route:cache && php artisan view:cache",
+    "buildCommand": "npm run build",
     "installCommand": "npm install"
 }
