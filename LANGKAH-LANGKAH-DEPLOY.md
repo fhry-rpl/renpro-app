@@ -231,29 +231,51 @@ Vercel akan mendeteksi `vercel.json` dan menjalankan build.
 
 Setelah deploy berhasil, migration harus dijalankan untuk membuat tabel-tabel di PostgreSQL.
 
-#### Via Vercel CLI:
+Vercel **tidak mendukung** SSH/exec ke server, jadi migration harus dipicu via HTTP request.
 
-```bash
-vercel env pull .env.production
-vercel --prod -- /bin/bash -c "php artisan migrate --force"
-```
+#### Cara Aman: Via route sementara dengan secret token
 
-#### Alternatif: Via route sementara
+**Langkah-langkah:**
 
-Buat route khusus yang diproteksi:
+1. Generate random secret (jalankan di lokal):
+   ```bash
+   php -r "echo bin2hex(random_bytes(32));"
+   ```
+   Simpan outputnya (contoh: `a1b2c3d4e5f6...`).
 
-```php
-// routes/web.php
-Route::get('/_migrate', function () {
-    if (app()->environment('local')) {
-        Artisan::call('migrate', ['--force' => true]);
-        return 'Migrated!';
-    }
-    abort(404);
-});
-```
+2. Tambahkan `MIGRATE_SECRET` ke Vercel Environment Variables:
+   ```bash
+   vercel env add MIGRATE_SECRET production
+   ```
+   Atau via Dashboard Vercel → Settings → Environment Variables.
 
-> **⚠️ HAPUS ROUTE INI** setelah migration selesai.
+3. Route migrasi **sudah tersedia** di `routes/web.php`:
+   ```php
+   Route::get('/_migrate/{token}', function (string $token) {
+       if ($token !== env('MIGRATE_SECRET')) {
+           abort(404);
+       }
+       Artisan::call('migrate', ['--force' => true]);
+       return response(Artisan::output());
+   })->middleware('throttle:3,1');
+   ```
+
+4. Deploy ulang aplikasi:
+   ```bash
+   vercel --prod
+   ```
+   Atau push ke GitHub (auto-deploy).
+
+5. Akses URL migrasi:
+   ```
+   https://<project>.vercel.app/_migrate/<MIGRATE_SECRET>
+   ```
+
+6. **⚠️ HAPUS ROUTE `/_migrate`** dari `routes/web.php` setelah migration selesai, lalu deploy ulang.
+
+> **Catatan:** Route ini dilindungi oleh:
+> - Secret token (cocok dengan `MIGRATE_SECRET`)
+> - Rate limiter (max 3 request per menit via `throttle:3,1`)
 
 ### 6.2. Setup Domain Kustom (Opsional)
 
