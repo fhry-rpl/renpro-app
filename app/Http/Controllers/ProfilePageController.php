@@ -12,20 +12,20 @@ class ProfilePageController extends Controller
         protected StaffRepositoryInterface $staffRepo,
     ) {}
 
-    public function show(string $slug)
+    public function show(string $page)
     {
         $allowed = ['sejarah', 'visi-misi', 'tugas-fungsi'];
 
-        if ($slug === 'struktur-organisasi') {
+        if ($page === 'struktur-organisasi') {
             $staff = $this->staffRepo->allActive();
             return view('pages.staff', compact('staff'));
         }
 
-        if (!in_array($slug, $allowed)) {
+        if (!in_array($page, $allowed)) {
             abort(404);
         }
 
-        $page = $this->pageRepo->findPublishedBySlug($slug);
+        $page = $this->pageRepo->findPublishedBySlug($page);
         if (!$page) {
             abort(404);
         }
