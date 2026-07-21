@@ -30,14 +30,22 @@ if (isset($_SERVER['REQUEST_URI']) && str_starts_with($_SERVER['REQUEST_URI'], '
         $token = strtok($token, '?');
         $secret = getenv('MIGRATE_SECRET');
 
+        if (!$secret) {
+            header('HTTP/1.1 404 Not Found');
+            echo "ERROR: Migration secret not configured" . PHP_EOL;
+            exit;
+        }
+
         if ($token !== $secret) {
-            echo "ERROR: Invalid token" . PHP_EOL;
+            header('HTTP/1.1 403 Forbidden');
+            echo "ERROR: Invalid migration token" . PHP_EOL;
             exit;
         }
 
         try {
             $dbUrl = getenv('DB_URL');
             if (!$dbUrl) {
+                header('HTTP/1.1 500 Internal Server Error');
                 echo "ERROR: DB_URL environment variable is not set. Set it in Vercel Dashboard." . PHP_EOL;
                 exit;
             }
