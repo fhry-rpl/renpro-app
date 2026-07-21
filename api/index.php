@@ -1,5 +1,7 @@
 <?php
 
+require __DIR__ . '/../vendor/autoload.php';
+
 if (class_exists(\Dotenv\Dotenv::class) && file_exists(__DIR__ . '/../.env.vercel')) {
     $dotenv = \Dotenv\Dotenv::createImmutable(__DIR__ . '/..', '.env.vercel');
     $dotenv->load();
@@ -40,7 +42,6 @@ if (isset($_SERVER['REQUEST_URI']) && str_starts_with($_SERVER['REQUEST_URI'], '
                 exit;
             }
 
-            require __DIR__ . '/../vendor/autoload.php';
             $app = require __DIR__ . '/../bootstrap/app.php';
             $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
             $kernel->bootstrap();
