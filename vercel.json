@@ -10,5 +10,5 @@
     ],
     "outputDirectory": "public",
     "buildCommand": "npm run build",
-    "installCommand": "composer install --no-dev --optimize-autoloader && npm install"
+    "installCommand": "npm install"
 }

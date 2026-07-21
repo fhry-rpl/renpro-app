@@ -34,12 +34,18 @@ if (isset($_SERVER['REQUEST_URI']) && str_starts_with($_SERVER['REQUEST_URI'], '
         }
 
         try {
+            $dbUrl = getenv('DB_URL');
+            if (!$dbUrl) {
+                echo "ERROR: DB_URL environment variable is not set. Set it in Vercel Dashboard." . PHP_EOL;
+                exit;
+            }
+
             require __DIR__ . '/../vendor/autoload.php';
             $app = require __DIR__ . '/../bootstrap/app.php';
             $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
             $kernel->bootstrap();
 
-            $url = parse_url(getenv('DB_URL'));
+            $url = parse_url($dbUrl);
             $host = str_replace('-pooler', '', $url['host']);
             $port = $url['port'] ?? 5432;
             $dbname = ltrim($url['path'] ?? '/neondb', '/');
