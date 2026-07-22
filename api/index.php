@@ -2,11 +2,6 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-if (class_exists(\Dotenv\Dotenv::class) && file_exists(__DIR__ . '/../.env.vercel')) {
-    $dotenv = \Dotenv\Dotenv::createImmutable(__DIR__ . '/..', '.env.vercel');
-    $dotenv->load();
-}
-
 // Handle /__ endpoints directly without Laravel
 if (isset($_SERVER['REQUEST_URI']) && str_starts_with($_SERVER['REQUEST_URI'], '/__')) {
     header('Content-Type: text/plain');
@@ -50,6 +45,24 @@ if (isset($_SERVER['REQUEST_URI']) && str_starts_with($_SERVER['REQUEST_URI'], '
                 exit;
             }
 
+            // Add endpoint ID to the connection string for Neon SNI support
+            $url = parse_url($dbUrl);
+            $endpointId = substr($url['host'], 0, strpos($url['host'], '.'));
+
+            if (strpos($dbUrl, 'options=') === false) {
+                $separator = strpos($dbUrl, '?') === false ? '?' : '&';
+                $dbUrl .= $separator . "options=endpoint%3D{$endpointId}";
+            }
+
+            // Connect directly using pg_connect for migration
+            $connString = str_replace('postgresql://', '', $dbUrl);
+            $conn = pg_connect($connString, PGSQL_CONNECT_FORCE_NEW);
+            if (!$conn) {
+                throw new \Exception("Failed to connect: " . pg_last_error());
+            }
+            echo "Database connected!" . PHP_EOL;
+            pg_close($conn);
+
             $app = require __DIR__ . '/../bootstrap/app.php';
             $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
             $kernel->bootstrap();
@@ -61,18 +74,22 @@ if (isset($_SERVER['REQUEST_URI']) && str_starts_with($_SERVER['REQUEST_URI'], '
             $username = $url['user'] ?? '';
             $password = $url['pass'] ?? '';
 
-            config(['database.connections.pgsql' => [
-                'driver' => 'pgsql',
-                'host' => $host,
-                'port' => $port,
-                'database' => $dbname,
-                'username' => $username,
-                'password' => $password,
-                'charset' => 'utf8',
-                'prefix' => '',
-                'search_path' => 'public',
-                'sslmode' => 'require',
-            ]]);
+            config([
+                'database.default' => 'pgsql',
+                'database.connections.pgsql' => [
+                    'driver' => 'pgsql',
+                    'host' => $host,
+                    'port' => $port,
+                    'database' => $dbname,
+                    'username' => $username,
+                    'password' => $password,
+                    'charset' => 'utf8',
+                    'prefix' => '',
+                    'search_path' => 'public',
+                    'sslmode' => 'require',
+                    'options' => "endpoint={$endpointId}",
+                ],
+            ]);
 
             echo "Running migrations..." . PHP_EOL;
             \Illuminate\Support\Facades\Artisan::call('migrate:fresh', [

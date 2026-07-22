@@ -2,11 +2,8 @@
     "functions": {
         "api/index.php": {
             "runtime": "vercel-php@0.7.1",
-            "config": {
-                "memory": 1024,
-                "maxDuration": 15,
-                "minTimeout": 1
-            }
+            "memory": 1024,
+            "maxDuration": 60
         }
     },
     "routes": [
