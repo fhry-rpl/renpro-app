@@ -29,5 +29,6 @@ Thumbs.db
 .vercel
 .env.*.local
 .env*
-!.env.vercel
+!.env.example
+!.env.vercel.example
 /bootstrap/cache/*.php

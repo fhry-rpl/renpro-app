@@ -42,7 +42,7 @@ class PostController extends Controller
             $data['slug'] = Str::slug($data['title']);
         }
         if ($request->hasFile('thumbnail')) {
-            $data['thumbnail'] = $request->file('thumbnail')->store('posts/thumbnails');
+            $data['thumbnail'] = $request->file('thumbnail')->store('posts/thumbnails', 'uploads');
         }
         $data['user_id'] = auth()->id();
         Post::create($data);
@@ -64,9 +64,9 @@ class PostController extends Controller
         }
         if ($request->hasFile('thumbnail')) {
             if ($post->thumbnail) {
-                Storage::delete($post->thumbnail);
+                Storage::disk('uploads')->delete($post->thumbnail);
             }
-            $data['thumbnail'] = $request->file('thumbnail')->store('posts/thumbnails');
+            $data['thumbnail'] = $request->file('thumbnail')->store('posts/thumbnails', 'uploads');
         }
         $post->update($data);
         return redirect()->route('admin.posts.index')
@@ -76,7 +76,7 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         if ($post->thumbnail) {
-            Storage::delete($post->thumbnail);
+            Storage::disk('uploads')->delete($post->thumbnail);
         }
         $post->delete();
         return redirect()->route('admin.posts.index')

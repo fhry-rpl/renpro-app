@@ -54,8 +54,8 @@ class DocumentController extends Controller
     {
         $data = $request->validated();
         if ($request->hasFile('file')) {
-            Storage::delete($document->file_path);
-            $data['file_path'] = $request->file('file')->store('documents');
+            Storage::disk('uploads')->delete($document->file_path);
+            $data['file_path'] = $request->file('file')->store('documents', 'uploads');
         }
         $document->update($data);
         return redirect()->route('admin.documents.index')
@@ -64,7 +64,7 @@ class DocumentController extends Controller
 
     public function destroy(Document $document)
     {
-        Storage::delete($document->file_path);
+        Storage::disk('uploads')->delete($document->file_path);
         $document->delete();
         return redirect()->route('admin.documents.index')
             ->with('success', 'Dokumen berhasil dihapus.');

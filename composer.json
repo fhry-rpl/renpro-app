@@ -9,7 +9,8 @@
         "php": "^8.3",
         "fakerphp/faker": "^1.24",
         "laravel/framework": "^13.8",
-        "laravel/tinker": "^3.0"
+        "laravel/tinker": "^3.0",
+        "league/flysystem-aws-s3-v3": "^3.0"
     },
     "require-dev": {
         "laravel/breeze": "^2.4",
@@ -53,9 +54,7 @@
             "@php artisan package:discover --ansi"
         ],
         "post-install-cmd": [
-            "@php artisan config:cache --ansi",
-            "@php artisan route:cache --ansi",
-            "@php artisan view:cache --ansi"
+            "@php -r \"if (getenv('APP_KEY')) { echo 'Caching config...\\n'; passthru('php artisan config:cache --ansi'); passthru('php artisan route:cache --ansi'); passthru('php artisan view:cache --ansi'); } else { echo 'Skipping cache (no APP_KEY).\\n'; }\""
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"

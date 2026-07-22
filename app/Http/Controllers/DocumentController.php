@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Repositories\Contracts\DocumentRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class DocumentController extends Controller
 {
@@ -40,6 +41,6 @@ class DocumentController extends Controller
     {
         $document = $this->documentRepo->findById($id);
         $this->documentRepo->incrementDownload($id);
-        return response()->download(storage_path("app/public/{$document->file_path}"));
+        return Storage::disk('uploads')->download($document->file_path);
     }
 }

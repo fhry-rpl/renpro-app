@@ -60,6 +60,15 @@ return [
             'report' => false,
         ],
 
+        'uploads' => [
+            'driver' => env('UPLOADS_DISK', 'local'),
+            'root' => env('UPLOADS_ROOT', storage_path('app/public')),
+            'url' => env('UPLOADS_URL', rtrim(env('APP_URL', 'http://localhost'), '/').'/storage'),
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
     ],
 
     /*

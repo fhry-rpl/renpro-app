@@ -1,21 +1,24 @@
 {
     "functions": {
         "api/index.php": {
-            "runtime": "vercel-php@0.7.1",
+            "runtime": "vercel-php@0.7.5",
             "memory": 1024,
-            "maxDuration": 60
+            "maxDuration": 30
         }
     },
     "routes": [
         { "src": "/build/(.*)", "dest": "/public/build/$1" },
-        { "src": "/storage/(.*)", "dest": "/storage/$1" },
-        { "src": "/api/(.*)", "dest": "/api/index.php" },
+        { "src": "/favicon.ico", "dest": "/public/favicon.ico" },
+        { "src": "/robots.txt", "dest": "/public/robots.txt" },
         { "src": "/(.*)", "dest": "/api/index.php" }
     ],
-    "outputDirectory": "public",
+    "installCommand": "composer install --no-dev --optimize-autoloader && npm install",
     "buildCommand": "npm run build",
+    "outputDirectory": "public",
     "env": {
+        "APP_ENV": "production",
         "NODE_ENV": "production",
-        "COMPOSER_PROCESS_TIMEOUT": "0"
+        "COMPOSER_PROCESS_TIMEOUT": "0",
+        "COMPOSER_ALLOW_SUPERUSER": "1"
     }
 }
