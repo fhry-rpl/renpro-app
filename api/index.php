@@ -47,16 +47,16 @@ if (str_starts_with($uri, '/__migrate/')) {
         $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
         $kernel->bootstrap();
 
-        // Clear any failed transaction state from previous attempts
-        try {
-            \Illuminate\Support\Facades\DB::statement('ROLLBACK');
-        } catch (\Throwable $e) {
-            // No active transaction, ignore
-        }
+        // Force reset database: drop all tables and recreate schema fresh
+        \Illuminate\Support\Facades\DB::statement('DROP SCHEMA public CASCADE');
+        \Illuminate\Support\Facades\DB::statement('CREATE SCHEMA public');
 
-        // Drop all tables and re-run migrations with seed
-        $exitCode = \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--force' => true, '--seed' => true, '--drop-views' => false, '--drop-types' => false]);
-        echo "migrate:fresh exit code: {$exitCode}\n";
+        $exitCode = \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        echo "migrate exit code: {$exitCode}\n";
+        echo \Illuminate\Support\Facades\Artisan::output();
+
+        $exitCode = \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
+        echo "db:seed exit code: {$exitCode}\n";
         echo \Illuminate\Support\Facades\Artisan::output();
 
         echo "\nMigration completed successfully.\n";
