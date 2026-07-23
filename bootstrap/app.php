@@ -23,11 +23,12 @@ $app = Application::configure(basePath: dirname(__DIR__))
 // Vercel serverless filesystem is read-only except /tmp
 // Redirect bootstrap/cache to /tmp so Laravel can write cache files
 if (getenv('VERCEL')) {
-    $tmpCachePath = '/tmp/bootstrap/cache';
+    $tmpBootstrapPath = '/tmp/bootstrap';
+    $tmpCachePath = $tmpBootstrapPath . '/cache';
     if (!is_dir($tmpCachePath)) {
         mkdir($tmpCachePath, 0777, true);
     }
-    // Copy any existing cache files from the real path
+    // Copy any existing cache files to the writable /tmp location
     $realCachePath = __DIR__ . '/cache';
     if (is_dir($realCachePath)) {
         foreach (glob($realCachePath . '/*.php') as $file) {
@@ -37,7 +38,7 @@ if (getenv('VERCEL')) {
             }
         }
     }
-    $app->useBootstrapPath($tmpCachePath);
+    $app->useBootstrapPath($tmpBootstrapPath);
 }
 
 return $app;
