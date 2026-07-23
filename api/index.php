@@ -47,7 +47,15 @@ if (str_starts_with($uri, '/__migrate/')) {
         $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
         $kernel->bootstrap();
 
-        $exitCode = \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--force' => true, '--seed' => true]);
+        // Clear any failed transaction state from previous attempts
+        try {
+            \Illuminate\Support\Facades\DB::statement('ROLLBACK');
+        } catch (\Throwable $e) {
+            // No active transaction, ignore
+        }
+
+        // Drop all tables and re-run migrations with seed
+        $exitCode = \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--force' => true, '--seed' => true, '--drop-views' => false, '--drop-types' => false]);
         echo "migrate:fresh exit code: {$exitCode}\n";
         echo \Illuminate\Support\Facades\Artisan::output();
 
