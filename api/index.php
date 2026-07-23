@@ -6,7 +6,11 @@ require __DIR__ . '/../vendor/autoload.php';
  * Log helper — writes to stderr so it appears in Vercel Dashboard logs
  */
 function vercel_log(string $message): void {
-    fwrite(STDERR, "[vercel] " . $message . "\n");
+    $stderr = fopen('php://stderr', 'w');
+    if ($stderr) {
+        fwrite($stderr, "[vercel] " . $message . "\n");
+        fclose($stderr);
+    }
 }
 
 // Load .env.vercel as fallback if .env doesn't exist (e.g. on Vercel serverless)
