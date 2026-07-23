@@ -47,12 +47,8 @@ if (str_starts_with($uri, '/__migrate/')) {
         $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
         $kernel->bootstrap();
 
-        $exitCode = \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-        echo "migrate exit code: {$exitCode}\n";
-        echo \Illuminate\Support\Facades\Artisan::output();
-
-        $exitCode = \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
-        echo "db:seed exit code: {$exitCode}\n";
+        $exitCode = \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--force' => true, '--seed' => true]);
+        echo "migrate:fresh exit code: {$exitCode}\n";
         echo \Illuminate\Support\Facades\Artisan::output();
 
         echo "\nMigration completed successfully.\n";
