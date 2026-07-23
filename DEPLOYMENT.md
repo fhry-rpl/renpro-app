@@ -27,16 +27,20 @@ Buka **Vercel Dashboard → Project → Settings → Environment Variables**, ta
 
 ```
 Git Push → Vercel Build
-  ├── composer install --no-dev (PHP dependencies)
-  ├── npm install (Node dependencies)
+  ├── vercel-php installs Composer dependencies
+  ├── Vercel installs Node dependencies
   └── npm run build (Vite assets → public/build/)
 
-Vercel Runtime (vercel-php@0.7.5)
+Vercel Runtime (vercel-php@0.7.4 / PHP 8.3)
   └── api/index.php → Laravel bootstrap
        ├── /__ping → health check
        ├── /__migrate/{token} → run migration + seeder
        └── /* → Laravel app
 ```
+
+> Jangan menambahkan `composer install` ke `installCommand`. Perintah itu
+> dijalankan pada image Node Vercel yang tidak menyediakan Composer, sehingga
+> deployment akan gagal. Runtime `vercel-php` memasang dependency PHP sendiri.
 
 ## Deploy
 
