@@ -1,11 +1,25 @@
 import Alpine from 'alpinejs';
-import { createIcons, icons } from 'lucide';
+import { createIcons } from 'lucide';
+import facebook from 'lucide/dist/esm/icons/facebook';
+import instagram from 'lucide/dist/esm/icons/instagram';
+import messageCircle from 'lucide/dist/esm/icons/message-circle';
 
 window.Alpine = Alpine;
 
-const initLucide = () => createIcons({ icons });
+const initLucide = () => createIcons({ icons: { facebook, instagram, messageCircle } });
 initLucide();
 document.addEventListener('alpine:after', initLucide);
+
+function lockScroll(bodyStyle) {
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    bodyStyle.paddingRight = `${scrollbarWidth}px`;
+    bodyStyle.overflow = 'hidden';
+}
+
+function unlockScroll(bodyStyle) {
+    bodyStyle.paddingRight = '';
+    bodyStyle.overflow = '';
+}
 
 document.addEventListener('alpine:init', () => {
     Alpine.data('navigation', () => ({
@@ -13,39 +27,36 @@ document.addEventListener('alpine:init', () => {
         openMobile: null,
         openDropdown: null,
         openSearch: false,
-        hoverTimeout: null,
         scrolled: false,
 
         toggle() {
             this.isOpen = !this.isOpen;
+            const body = document.body.style;
             if (this.isOpen) {
-                const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-                document.body.style.paddingRight = `${scrollbarWidth}px`;
-                document.body.style.overflow = 'hidden';
+                lockScroll(body);
             } else {
-                document.body.style.paddingRight = '';
-                document.body.style.overflow = '';
+                unlockScroll(body);
             }
         },
 
         init() {
+            const body = document.body.style;
+
             this.$watch('isOpen', (val) => {
                 if (!val) {
                     this.openMobile = null;
-                    document.body.style.paddingRight = '';
-                    document.body.style.overflow = '';
+                    unlockScroll(body);
                 }
             });
 
             this.$watch('openSearch', (val) => {
                 if (val) {
                     this.$nextTick(() => {
-                        const input = this.$refs?.searchInput;
-                        if (input) setTimeout(() => input.focus(), 100);
+                        this.$refs?.searchInput?.focus();
                     });
-                    document.body.style.overflow = 'hidden';
+                    body.overflow = 'hidden';
                 } else {
-                    document.body.style.overflow = '';
+                    body.overflow = '';
                 }
             });
         },
@@ -66,28 +77,37 @@ document.addEventListener('alpine:init', () => {
         open: false,
         currentIndex: 0,
         images: [],
+
         openGallery(index, images) {
             this.images = images;
             this.currentIndex = index;
             this.open = true;
             document.body.style.overflow = 'hidden';
         },
+
         close() {
             this.open = false;
             document.body.style.overflow = '';
         },
+
         next() {
             this.currentIndex = (this.currentIndex + 1) % this.images.length;
         },
+
         prev() {
             this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
         },
+
         init() {
-            document.addEventListener('keydown', (e) => {
+            const onKeydown = (e) => {
                 if (!this.open) return;
-                if (e.key === 'Escape') this.close();
-                if (e.key === 'ArrowRight') this.next();
-                if (e.key === 'ArrowLeft') this.prev();
+                if (e.key === 'Escape') return this.close();
+                if (e.key === 'ArrowRight') return this.next();
+                if (e.key === 'ArrowLeft') return this.prev();
+            };
+            document.addEventListener('keydown', onKeydown);
+            this.$watch('open', (val) => {
+                if (!val) document.removeEventListener('keydown', onKeydown);
             });
         },
     }));

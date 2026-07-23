@@ -54,7 +54,7 @@
             "@php artisan package:discover --ansi"
         ],
         "post-install-cmd": [
-            "@php -r \"if (getenv('APP_KEY')) { echo 'Caching config...\\n'; passthru('php artisan config:cache --ansi'); passthru('php artisan route:cache --ansi'); passthru('php artisan view:cache --ansi'); } else { echo 'Skipping cache (no APP_KEY).\\n'; }\""
+            "@php artisan package:discover --ansi"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"

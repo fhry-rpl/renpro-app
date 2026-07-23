@@ -4,7 +4,7 @@
         "api/index.php": {
             "runtime": "vercel-php@0.9.0",
             "memory": 1024,
-            "maxDuration": 60
+            "maxDuration": 300
         }
     },
     "routes": [
@@ -29,6 +29,8 @@
         "LOG_CHANNEL": "stderr",
         "LOG_LEVEL": "error",
         "COMPOSER_PROCESS_TIMEOUT": "0",
-        "COMPOSER_ALLOW_SUPERUSER": "1"
+        "COMPOSER_ALLOW_SUPERUSER": "1",
+        "VIEW_COMPILED_PATH": "/tmp/storage/framework/views",
+        "APP_SERVICE_PROVIDER_VERCEL": "true"
     }
 }
