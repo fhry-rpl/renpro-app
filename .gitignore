@@ -32,3 +32,4 @@ Thumbs.db
 !.env.example
 !.env.vercel.example
 /bootstrap/cache/*.php
+.env.vercel
