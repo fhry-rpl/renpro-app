@@ -37,7 +37,7 @@ if (getenv('VERCEL')) {
             }
         }
     }
-    $app->setBootstrapPath($tmpCachePath);
+    $app->useBootstrapPath($tmpCachePath);
 }
 
 return $app;
